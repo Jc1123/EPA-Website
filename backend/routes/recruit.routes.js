@@ -1,35 +1,44 @@
-const express = require('express');
+import express from 'express';
+import sql from '../db/database.js';
+import { verifyToken, requireRole } from '../middlewares/auth.middleware.js';
+
 const router = express.Router();
-const db = require('../db/database');
-const { formLimiter } = require('../middlewares/rateLimit');
-const { verifyToken, requireRole } = require('../middlewares/auth.middleware');
 
-// Public route: Enviar recrutamento (Protegido por Rate Limit)
-router.post('/', formLimiter, (req, res) => {
-    const { nick, dob } = req.body;
-    if (!nick || !dob) return res.status(400).json({ message: 'Preencha todos os campos.' });
+// Rota pública: Enviar recrutamento
+router.post('/', async (req, res) => {
+    try {
+        const { nick, dob } = req.body;
+        if (!nick || !dob) return res.status(400).json({ message: 'Preencha todos os campos.' });
 
-    db.run(`INSERT INTO recruits (nick, dob, date_applied) VALUES (?, ?, CURRENT_TIMESTAMP)`, 
-    [nick, dob], function(err) {
-        if (err) return res.status(500).json({ message: 'Erro ao salvar dados.' });
+        await sql`INSERT INTO recruits (nick, dob, date_applied) VALUES (${nick}, ${dob}, CURRENT_TIMESTAMP)`;
         res.status(201).json({ message: 'Sucesso' });
-    });
+    } catch (error) {
+        console.error('Erro ao salvar recrutamento:', error);
+        res.status(500).json({ message: 'Erro ao salvar dados.' });
+    }
 });
 
-// Admin route: Listar recrutas (Líder e Sublíder)
-router.get('/', verifyToken, (req, res) => {
-    db.all(`SELECT * FROM recruits`, [], (err, rows) => {
-        if (err) return res.status(500).json({ message: 'Erro no BD' });
+// Rota administrativa: Listar recrutas (Líder e Sublíder)
+router.get('/', verifyToken, async (req, res) => {
+    try {
+        const rows = await sql`SELECT * FROM recruits ORDER BY date_applied DESC`;
         res.json(rows);
-    });
+    } catch (error) {
+        console.error('Erro ao buscar recrutas:', error);
+        res.status(500).json({ message: 'Erro no BD' });
+    }
 });
 
-// Admin route: Deletar recruta (Apenas Líder)
-router.delete('/:id', verifyToken, requireRole('lider'), (req, res) => {
-    db.run(`DELETE FROM recruits WHERE id = ?`, req.params.id, function(err) {
-        if (err) return res.status(500).json({ message: 'Erro ao deletar.' });
+// Rota administrativa: Deletar recruta (Apenas Líder)
+router.delete('/:id', verifyToken, requireRole('lider'), async (req, res) => {
+    try {
+        const { id } = req.params;
+        await sql`DELETE FROM recruits WHERE id = ${id}`;
         res.json({ message: 'Recruta deletado.' });
-    });
+    } catch (error) {
+        console.error('Erro ao deletar recruta:', error);
+        res.status(500).json({ message: 'Erro ao deletar.' });
+    }
 });
 
-module.exports = router;
+export default router;

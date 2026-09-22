@@ -5,13 +5,13 @@ document.getElementById('recruit-form').addEventListener('submit', async (e) => 
     const msgEl = document.getElementById('recruit-msg');
 
     try {
-        const res = await fetch(`${API_URL}/recruit`, {
+        const res = await fetch('/api/recruit', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nick, dob })
         });
         const data = await res.json();
-        
+
         if (res.ok) {
             msgEl.innerHTML = `<span style="color: #00ff00;">Solicitação enviada com sucesso!</span>`;
             e.target.reset();

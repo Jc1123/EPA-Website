@@ -1,19 +1,17 @@
 import express from 'express';
 import sql from '../db/database.js';
-import { formLimiter } from '../middlewares/rateLimit.js';
 import { verifyToken, requireRole } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
-// Rota pública: Enviar recrutamento (Protegido com Rate Limit)
-router.post('/', formLimiter, async (req, res) => {
+// Rota pública: Enviar recrutamento
+router.post('/', async (req, res) => {
     try {
         const { nick, dob } = req.body;
         if (!nick || !dob) {
             return res.status(400).json({ message: 'Preencha todos os campos.' });
         }
 
-        // Deixamos o Postgres inserir o date_applied automaticamente
         await sql`INSERT INTO recruits (nick, dob) VALUES (${nick}, ${dob})`;
         
         return res.status(201).json({ message: 'Solicitação enviada com sucesso!' });

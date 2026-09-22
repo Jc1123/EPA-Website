@@ -1,0 +1,33 @@
+.sidebar {
+    width: 280px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 20px;
+}
+.logo {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--cyan-active);
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    margin-bottom: 40px;
+}
+#main-nav { display: flex; flex-direction: column; gap: 10px; }
+.nav-btn {
+    background: transparent;
+    color: var(--text-light);
+    text-align: left;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border-left: 4px solid transparent;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.05); }
+.nav-btn.active {
+    background: rgba(0, 255, 255, 0.1);
+    color: var(--cyan-active);
+    border-left-color: var(--cyan-active);
+    box-shadow: inset 5px 0 10px -5px var(--cyan-active);
+}

@@ -1,0 +1,12 @@
+{
+  "name": "embrapa-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js",
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.0",
+    "bcrypt": "^5.1.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

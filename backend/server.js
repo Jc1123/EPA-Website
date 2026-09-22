@@ -8,15 +8,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Rotas
+// Rotas da API
 app.use('/api/auth', authRoutes);
 app.use('/api/recruit', recruitRoutes);
 
-// Executa o escutador de porta apenas em ambiente local
+// Rota de teste
+app.get('/api', (req, res) => {
+  res.json({ status: 'API Online' });
+});
+
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`Servidor a correr na porta ${PORT}`));
+  app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
 }
 
-// Exportação obrigatória para a Vercel funcionar como Serverless
 export default app;
